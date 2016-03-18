@@ -1,15 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TitleGUI : MonoBehaviour {
+public class TitleGUI : MonoBehaviour
+{
     public GUISkin customSkin;
 
-	void OnGUI ()
+    void OnGUI()
     {
-    GUI.skin = customSkin;
-	if(GUI.Button(new Rect(250,150,100,50), "PLAY"))
+        int buttonWitdth = 100;
+        int buttonHeight = 50;
+        float halfScreenW = Screen.width * 0.5f;
+        float halfButtonW = buttonWitdth * 0.5f;
+        GUI.skin = customSkin;
+        if (GUI.Button(new Rect(halfScreenW - halfButtonW, 250, buttonWitdth, buttonHeight), "PLAY"))
         {
-            print("click");
+            Application.LoadLevel("game");
         }
-	}
+    }
 }
