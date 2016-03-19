@@ -41,7 +41,6 @@ public class GameScript : MonoBehaviour
         GUILayout.BeginArea(new Rect(0, 0, Screen.width, Screen.height));
         BuildGrid();
         GUILayout.EndArea();
-        print("building grid!");
     }
 
     private void BuildGrid()
@@ -53,8 +52,7 @@ public class GameScript : MonoBehaviour
             for (int j = 0; j < columns; j++)
             {
                 Object card= gridOfCards[i,j];
-                Texture2D tex = Resources.Load(card.img) as Texture2D;
-                if (GUILayout.Button(tex,GUILayout.Width(cardWidth)))
+                if (GUILayout.Button(Resources.Load(card.img) as Texture2D, GUILayout.Width(cardWidth)))
                 {
                     Debug.Log(card.img);
                 }
