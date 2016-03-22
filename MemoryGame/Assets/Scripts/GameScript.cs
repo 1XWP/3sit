@@ -14,36 +14,26 @@ public class GameScript : MonoBehaviour
     int machesMade = 0;
     int cardWidth = 100;
     int cardHeight = 100;
-    List<Card> ListOfCards;
     Card[,] gridOfCards;
     ArrayList arrayCardsFlipped;
     bool playerCanClick; //flag to prevent clicking
     bool playerHasWon = false;
-    Card card= new Card();
 
     // Use this for initialization
     void Start()
     {
         playerCanClick = true;
-        ListOfCards = new List<Card>();
         gridOfCards = new Card[rows, columns];
         arrayCardsFlipped = new ArrayList();
-        BuildDeck();
         System.Random rnd = new System.Random();
         List<string> fruits = new List<string>(new string[] { "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry", "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry" });
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < columns; j++)
-            {
-                //gridOfCards[i, j] = new Card("apple");
-                
+            {  
                  int someNum = rnd.Next(0, fruits.Count);
                  gridOfCards[i, j] = new Card(fruits.ElementAt(someNum));
-                 fruits.RemoveAt(someNum);
-                //ListOfCards.RemoveAt(0);
-                /*   int someNum = rnd.Next(0, ListOfCards.Count);
-                   gridOfCards[i, j] = ListOfCards[someNum];
-                  */
+                 fruits.RemoveAt(someNum);   
             }
         }
     }
@@ -65,7 +55,7 @@ public class GameScript : MonoBehaviour
             GUILayout.FlexibleSpace();
             for (int j = 0; j < columns; j++)
             {
-                card= gridOfCards[i,j];
+                Card card= gridOfCards[i,j];
                 if (GUILayout.Button(Resources.Load(card.img) as Texture2D, GUILayout.Width(cardWidth)))
                 {
                     Debug.Log(card.img);
@@ -78,34 +68,12 @@ public class GameScript : MonoBehaviour
         GUILayout.EndVertical();
     }
 
-    private void BuildDeck()
-    {
-        int totalFruits = 8;
-        Card card;
-        System.Random rnd = new System.Random();
-        List<string> fruits = new List<string>(new string[] { "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry", "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry" });
-
-        for (int i = 0; i < totalFruits; i++)
-        {
-            int someNum = rnd.Next(0, fruits.Count);
-            String choosedCard = fruits[someNum];
-            fruits.RemoveAt(someNum);
-            card = new Card(choosedCard);
-            ListOfCards.Add(card);
-        }
-    }
-
     class Card : System.Object
     {
         bool isFaceUp = false;
         bool isMatched = false;
         public String img;
-
-        public Card()
-        {
-            img = "apple";
-        }
-
+     
         public Card(string choosedCard)
         {
             this.img = choosedCard;
