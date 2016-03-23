@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 public class GameScript : MonoBehaviour
 {
@@ -16,9 +14,15 @@ public class GameScript : MonoBehaviour
     int cardWidth = 100;
     int cardHeight = 100;
     Card[,] gridOfCards;
-    List<Card> arrayCardsFlipped;
+    public List<Card> arrayCardsFlipped;
     bool playerCanClick; //flag to prevent clicking
     bool playerHasWon = false;
+    Timer timer;
+
+    void Awake()
+    {
+        timer = GetComponent<Timer>();
+    }
 
     // Use this for initialization
     void Start()
@@ -70,11 +74,8 @@ public class GameScript : MonoBehaviour
                 {
                     if (playerCanClick)
                     {
-                        FlipCardFaceUp(card);
-                        //Thread.Sleep(2000);
-                       // SetDown(card);
+                        FlipCardFaceUp(card);                    
                     }
-                    Debug.Log(card.img);
                 }
             }
             GUILayout.FlexibleSpace();
@@ -86,27 +87,26 @@ public class GameScript : MonoBehaviour
 
     private void FlipCardFaceUp(Card card)
     {
-        card.isFaceUp = true;
         if (arrayCardsFlipped.Contains(card) == false)
         {
+            card.isFaceUp = true;
             arrayCardsFlipped.Add(card);
             if (arrayCardsFlipped.Count > 2)
             {
                 playerCanClick = false;
-               // Thread.Sleep(1000);
                 arrayCardsFlipped.ForEach(SetDown);
                 arrayCardsFlipped = new List<Card>();
                 playerCanClick = true;
-            }
+            }              
         }
     }
 
-    private void SetDown(Card obj)
+    public void SetDown(Card obj)
     {
         obj.isFaceUp = false;
     }
 
-    class Card : System.Object
+    public class Card : System.Object
     {
         public bool isFaceUp = false;
         bool isMatched = false;
