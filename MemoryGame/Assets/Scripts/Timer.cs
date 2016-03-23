@@ -24,7 +24,14 @@ public class Timer : MonoBehaviour
             }
             if (interval <= 0)
             {
-                gameScript.arrayCardsFlipped.ForEach(gameScript.SetDown);
+               if(gameScript.arrayCardsFlipped[0].id.ToString().Equals(gameScript.arrayCardsFlipped[1].id.ToString()))
+                {
+                    gameScript.arrayCardsFlipped.ForEach(gameScript.SetMatch);               
+                }
+                else
+                {
+                    gameScript.arrayCardsFlipped.ForEach(gameScript.SetDown);
+                }
                 gameScript.arrayCardsFlipped = new List<GameScript.Card>();
                 interval = 2;
             }
