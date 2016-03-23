@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 public class GameScript : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class GameScript : MonoBehaviour
     int cardWidth = 100;
     int cardHeight = 100;
     Card[,] gridOfCards;
-    ArrayList arrayCardsFlipped;
+    List<Card> arrayCardsFlipped;
     bool playerCanClick; //flag to prevent clicking
     bool playerHasWon = false;
 
@@ -24,7 +25,7 @@ public class GameScript : MonoBehaviour
     {
         playerCanClick = true;
         gridOfCards = new Card[rows, columns];
-        arrayCardsFlipped = new ArrayList();
+        arrayCardsFlipped = new List<Card>();
         System.Random rnd = new System.Random();
         List<string> fruits = new List<string>(new string[] { "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry", "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry" });
         for (int i = 0; i < rows; i++)
@@ -56,8 +57,23 @@ public class GameScript : MonoBehaviour
             for (int j = 0; j < columns; j++)
             {
                 Card card= gridOfCards[i,j];
-                if (GUILayout.Button(Resources.Load(card.img) as Texture2D, GUILayout.Width(cardWidth)))
+                string img;
+                if (card.isFaceUp)
                 {
+                    img = card.img;
+                }
+                else
+                {
+                    img = "wrench";
+                }
+                if (GUILayout.Button(Resources.Load(img) as Texture2D, GUILayout.Width(cardWidth)))
+                {
+                    if (playerCanClick)
+                    {
+                        FlipCardFaceUp(card);
+                        //Thread.Sleep(2000);
+                       // SetDown(card);
+                    }
                     Debug.Log(card.img);
                 }
             }
@@ -68,9 +84,31 @@ public class GameScript : MonoBehaviour
         GUILayout.EndVertical();
     }
 
+    private void FlipCardFaceUp(Card card)
+    {
+        card.isFaceUp = true;
+        if (arrayCardsFlipped.Contains(card) == false)
+        {
+            arrayCardsFlipped.Add(card);
+            if (arrayCardsFlipped.Count > 2)
+            {
+                playerCanClick = false;
+               // Thread.Sleep(1000);
+                arrayCardsFlipped.ForEach(SetDown);
+                arrayCardsFlipped = new List<Card>();
+                playerCanClick = true;
+            }
+        }
+    }
+
+    private void SetDown(Card obj)
+    {
+        obj.isFaceUp = false;
+    }
+
     class Card : System.Object
     {
-        bool isFaceUp = false;
+        public bool isFaceUp = false;
         bool isMatched = false;
         public String img;
      
