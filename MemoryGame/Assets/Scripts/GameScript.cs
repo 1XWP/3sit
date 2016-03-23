@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 public class GameScript : MonoBehaviour
 {
@@ -31,14 +32,16 @@ public class GameScript : MonoBehaviour
         gridOfCards = new Card[rows, columns];
         arrayCardsFlipped = new List<Card>();
         System.Random rnd = new System.Random();
+        int id = 0;
         List<string> fruits = new List<string>(new string[] { "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry", "apple", "orange", "cherry", "carrot", "pinneaple", "watermelon", "raspberry", "strawberry" });
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < columns; j++)
-            {  
-                 int someNum = rnd.Next(0, fruits.Count);
-                 gridOfCards[i, j] = new Card(fruits.ElementAt(someNum));
-                 fruits.RemoveAt(someNum);   
+            {
+                int someNum = rnd.Next(0, fruits.Count);
+                gridOfCards[i, j] = new Card(fruits.ElementAt(someNum), id);
+                id++;
+                fruits.RemoveAt(someNum);
             }
         }
     }
@@ -60,7 +63,7 @@ public class GameScript : MonoBehaviour
             GUILayout.FlexibleSpace();
             for (int j = 0; j < columns; j++)
             {
-                Card card= gridOfCards[i,j];
+                Card card = gridOfCards[i, j];
                 string img;
                 if (card.isFaceUp)
                 {
@@ -70,13 +73,16 @@ public class GameScript : MonoBehaviour
                 {
                     img = "wrench";
                 }
+
+                GUI.enabled = !card.isMatched;
                 if (GUILayout.Button(Resources.Load(img) as Texture2D, GUILayout.Width(cardWidth)))
                 {
                     if (playerCanClick)
                     {
-                        FlipCardFaceUp(card);                    
+                        FlipCardFaceUp(card);
                     }
                 }
+                GUI.enabled = true;
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -87,18 +93,33 @@ public class GameScript : MonoBehaviour
 
     private void FlipCardFaceUp(Card card)
     {
+        card.isFaceUp = true;
         if (arrayCardsFlipped.Contains(card) == false)
         {
-            card.isFaceUp = true;
             arrayCardsFlipped.Add(card);
+            if (arrayCardsFlipped.Count == 2)
+            {
+                if (arrayCardsFlipped[0].img.ToString() == arrayCardsFlipped[1].img.ToString())
+                {
+                    playerCanClick = false;
+                    arrayCardsFlipped.ForEach(SetMatch);
+                    arrayCardsFlipped = new List<Card>();
+                    playerCanClick = true;
+                }
+            }
             if (arrayCardsFlipped.Count > 2)
             {
                 playerCanClick = false;
                 arrayCardsFlipped.ForEach(SetDown);
                 arrayCardsFlipped = new List<Card>();
                 playerCanClick = true;
-            }              
+            }
         }
+    }
+
+    public void SetMatch(Card obj)
+    {
+        obj.isMatched = true;
     }
 
     public void SetDown(Card obj)
@@ -109,12 +130,14 @@ public class GameScript : MonoBehaviour
     public class Card : System.Object
     {
         public bool isFaceUp = false;
-        bool isMatched = false;
+        public bool isMatched = false;
         public String img;
-     
-        public Card(string choosedCard)
+        public int id;
+
+        public Card(string choosedCard, int id)
         {
             this.img = choosedCard;
+            this.id = id;
         }
     }
 }
